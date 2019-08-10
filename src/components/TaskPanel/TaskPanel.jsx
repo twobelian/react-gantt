@@ -1,28 +1,44 @@
 import React, { Component } from 'react'
 
 export default class TaskPanel extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            tasks: [
+                {
+                    taskname: "task1",
+                    startdate: "2019/08/01",
+                    duedate: "2019/08/20"
+                },
+                {
+                    taskname: "task1",
+                    startdate: "2019/08/01",
+                    duedate: "2019/08/20"
+                }
+            ]
+
+        }
+    }
     render() {
+        console.log(this.state)
         return (
             <div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Task</th>
+                            <th>Task Name</th>
                             <th>Start Date</th>
                             <th>Due Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Task 1</td>
-                            <td>2019/08/01</td>
-                            <td>2019/08/20</td>
-                        </tr>
-                        <tr>
-                        <td>Task 2</td>
-                            <td>2019/08/12</td>
-                            <td>2019/08/31</td>
-                        </tr>
+                        {this.state.tasks.map((value, index) => {
+                            return <tr>
+                                <td><input type="text"></input></td>
+                                <td><input type="date"></input></td>
+                                <td><input type="date"></input></td>
+                            </tr>
+                        })}
                     </tbody>
                     <tfoot>
                         <tr>
