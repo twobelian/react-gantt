@@ -25,8 +25,8 @@ export default class TaskPanel extends Component {
         this.handleAddTask = this.handleAddTask.bind(this)
     }
 
-    handleAddTask(e) {
-        let currtask = this.state.tasks.slice()
+    handleAddTask() {
+        let currtasks = this.state.tasks.slice()
         let newtask = {
             key: uuid(),
             taskname: "new",
@@ -36,12 +36,28 @@ export default class TaskPanel extends Component {
 
 
         this.setState({
-            tasks: [...currtask, newtask]
+            tasks: [...currtasks, newtask]
         })
     }
 
-    render() {
+    handleChange(e, key) {
+        let currtasks = this.state.tasks.slice()
 
+        for (let i = 0; i < currtasks.length; i++) {
+            if (currtasks[i].key == key) {
+                currtasks[i][e.target.name] = e.target.value
+            }
+            break;
+        }
+
+        this.setState({
+            tasks: currtasks
+        })
+
+    }
+
+    render() {
+        console.log(this.state)
         return (
             <div>
                 <table>
@@ -54,10 +70,31 @@ export default class TaskPanel extends Component {
                     </thead>
                     <tbody>
                         {this.state.tasks.map((item, index) => {
-                            return <tr key={uuid()}>
-                                <td><input type="text" defaultValue={item.taskname}></input></td>
-                                <td><input type="date" defaultValue={item.startdate}></input></td>
-                                <td><input type="date" defaultValue={item.duedate}></input></td>
+                            return <tr key={item.key}>
+                                <td>
+                                    <input
+                                        type="text"
+                                        name="taskname"
+                                        defaultValue={item.taskname}
+                                        onChange={(e) => this.handleChange(e, item.key)}>
+                                    </input>
+                                </td>
+                                <td>
+                                    <input
+                                        type="date"
+                                        name="startdate"
+                                        defaultValue={item.startdate}
+                                        onChange={(e) => this.handleChange(e, item.key)}>
+                                    </input>
+                                </td>
+                                <td>
+                                    <input
+                                        type="date"
+                                        name="duedate"
+                                        defaultValue={item.duedate}
+                                        onChange={(e) => this.handleChange(e, item.key)}>
+                                    </input>
+                                </td>
                             </tr>
                         })}
                         <tr><td><button onClick={this.handleAddTask}>Add New Task</button></td></tr>
