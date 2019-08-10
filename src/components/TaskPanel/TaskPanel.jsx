@@ -23,6 +23,7 @@ export default class TaskPanel extends Component {
         }
 
         this.handleAddTask = this.handleAddTask.bind(this)
+        this.handleChange = this.handleChange.bind(this)
     }
 
     handleAddTask() {
@@ -46,18 +47,28 @@ export default class TaskPanel extends Component {
         for (let i = 0; i < currtasks.length; i++) {
             if (currtasks[i].key == key) {
                 currtasks[i][e.target.name] = e.target.value
+
+                this.setState({
+                    tasks: currtasks
+                })
+                
+                return;
             }
-            break;
         }
+    }
 
-        this.setState({
-            tasks: currtasks
-        })
 
+    renderRows() {
+        return this.state.tasks.map(item =>
+            <Row
+                item={item}
+                handleChange={this.handleChange}
+                key={item.key}
+            />
+        )
     }
 
     render() {
-        console.log(this.state)
         return (
             <div>
                 <table>
@@ -69,34 +80,7 @@ export default class TaskPanel extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.tasks.map((item, index) => {
-                            return <tr key={item.key}>
-                                <td>
-                                    <input
-                                        type="text"
-                                        name="taskname"
-                                        defaultValue={item.taskname}
-                                        onChange={(e) => this.handleChange(e, item.key)}>
-                                    </input>
-                                </td>
-                                <td>
-                                    <input
-                                        type="date"
-                                        name="startdate"
-                                        defaultValue={item.startdate}
-                                        onChange={(e) => this.handleChange(e, item.key)}>
-                                    </input>
-                                </td>
-                                <td>
-                                    <input
-                                        type="date"
-                                        name="duedate"
-                                        defaultValue={item.duedate}
-                                        onChange={(e) => this.handleChange(e, item.key)}>
-                                    </input>
-                                </td>
-                            </tr>
-                        })}
+                        {this.renderRows()}
                         <tr><td><button onClick={this.handleAddTask}>Add New Task</button></td></tr>
                     </tbody>
                     <tfoot>
@@ -106,8 +90,41 @@ export default class TaskPanel extends Component {
                         </tr>
                     </tfoot>
                 </table>
-
             </div>
         )
     }
+}
+
+
+const Row = (porps) => {
+    const item = porps.item
+    const handleChange = porps.handleChange
+    return (
+        <tr>
+            <td>
+                <input
+                    type="text"
+                    name="taskname"
+                    defaultValue={item.taskname}
+                    onChange={(e) => handleChange(e, item.key)}>
+                </input>
+            </td>
+            <td>
+                <input
+                    type="date"
+                    name="startdate"
+                    defaultValue={item.startdate}
+                    onChange={(e) => handleChange(e, item.key)}>
+                </input>
+            </td>
+            <td>
+                <input
+                    type="date"
+                    name="duedate"
+                    defaultValue={item.duedate}
+                    onChange={(e) => handleChange(e, item.key)}>
+                </input>
+            </td>
+        </tr>
+    )
 }
