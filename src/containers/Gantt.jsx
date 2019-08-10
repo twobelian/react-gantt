@@ -7,6 +7,7 @@ export default class Gantt extends Component {
         return (
             <div>
                 <TaskPanel />
+                <br/>
                 <GanttChart />
             </div>
         )
