@@ -13,6 +13,7 @@ export default class TaskPanel extends Component {
 
         this.handleAddTask = this.handleAddTask.bind(this)
         this.handleChange = this.handleChange.bind(this)
+        this.handleDelete = this.handleDelete.bind(this)
     }
 
     handleAddTask() {
@@ -40,12 +41,30 @@ export default class TaskPanel extends Component {
         }
     }
 
+    handleDelete(key) {
+        console.log('del')
+        let currtasks = this.state.tasks.slice()
+
+        for (let i = 0; i < currtasks.length; i++) {
+            if (currtasks[i].key == key) {
+                currtasks.splice(i, 1)
+
+                this.setState({
+                    tasks: currtasks
+                })
+
+                return;
+            }
+        }
+    }
+
 
     renderRows() {
         return this.state.tasks.map(item =>
             <Row
                 item={item}
                 handleChange={this.handleChange}
+                handleDelete={this.handleDelete}
                 key={item.key}
             />
         )
@@ -83,17 +102,17 @@ const newTask = () => (
         key: uuid(),
         taskname: "new task",
         startdate: moment().format("YYYY-MM-DD"),
-        duedate: moment().add(7,"days").format("YYYY-MM-DD"),
-        dureation:0,
+        duedate: moment().add(7, "days").format("YYYY-MM-DD"),
+        dureation: 0,
         // tasks must be done before this task start
-        prerequisites:[]
+        prerequisites: []
     }
 )
 
-
-const Row = (porps) => {
-    const item = porps.item
-    const handleChange = porps.handleChange
+const Row = (props) => {
+    const item = props.item
+    const handleChange = props.handleChange
+    const handleDelete = props.handleDelete
     return (
         <tr>
             <td>
@@ -118,6 +137,14 @@ const Row = (porps) => {
                     name="duedate"
                     defaultValue={item.duedate}
                     onChange={(e) => handleChange(e, item.key)}>
+                </input>
+            </td>
+            <td>
+                <input
+                    type="button"
+                    name="delete"
+                    value="delete"
+                    onClick={() => handleDelete(item.key)}>
                 </input>
             </td>
         </tr>
