@@ -1,25 +1,14 @@
 import React, { Component } from 'react'
 import uuid from 'uuidv4'
+import moment from 'moment'
 
 export default class TaskPanel extends Component {
     constructor(props) {
         super(props)
         this.state = {
             tasks: [
-                {
-                    key: uuid(),
-                    taskname: "task1",
-                    startdate: "2019-08-01",
-                    duedate: "2019-08-20"
-                },
-                {
-                    key: uuid(),
-                    taskname: "task1",
-                    startdate: "2019-08-21",
-                    duedate: "2019-08-31"
-                }
+                newTask()
             ]
-
         }
 
         this.handleAddTask = this.handleAddTask.bind(this)
@@ -28,13 +17,7 @@ export default class TaskPanel extends Component {
 
     handleAddTask() {
         let currtasks = this.state.tasks.slice()
-        let newtask = {
-            key: uuid(),
-            taskname: "new",
-            startdate: "2019-08-01",
-            duedate: "2019-08-20"
-        }
-
+        let newtask = newTask()
 
         this.setState({
             tasks: [...currtasks, newtask]
@@ -51,7 +34,7 @@ export default class TaskPanel extends Component {
                 this.setState({
                     tasks: currtasks
                 })
-                
+
                 return;
             }
         }
@@ -94,6 +77,18 @@ export default class TaskPanel extends Component {
         )
     }
 }
+
+const newTask = () => (
+    {
+        key: uuid(),
+        taskname: "new task",
+        startdate: moment().format("YYYY-MM-DD"),
+        duedate: moment().add(7,"days").format("YYYY-MM-DD"),
+        dureation:0,
+        // tasks must be done before this task start
+        prerequisites:[]
+    }
+)
 
 
 const Row = (porps) => {
