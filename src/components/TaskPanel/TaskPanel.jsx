@@ -5,57 +5,39 @@ import moment from 'moment'
 export default class TaskPanel extends Component {
     constructor(props) {
         super(props)
+
+        this.handleAddTask = this.handleAddTask.bind(this)
+        this.handleChange = this.handleChange.bind(this)
+        this.handleDelete = this.handleDelete.bind(this)
+
         this.state = {
             tasks: [
                 newTask()
             ]
         }
-
-        this.handleAddTask = this.handleAddTask.bind(this)
-        this.handleChange = this.handleChange.bind(this)
-        this.handleDelete = this.handleDelete.bind(this)
     }
 
     handleAddTask() {
-        let currtasks = this.state.tasks.slice()
-        let newtask = newTask()
-
-        this.setState({
-            tasks: [...currtasks, newtask]
-        })
+        this.setState((prevState) => ({ tasks: [...prevState.tasks, newTask()] }))
     }
 
     handleChange(e, key) {
-        let currtasks = this.state.tasks.slice()
+        const target = e.target
 
-        for (let i = 0; i < currtasks.length; i++) {
-            if (currtasks[i].key == key) {
-                currtasks[i][e.target.name] = e.target.value
-
-                this.setState({
-                    tasks: currtasks
-                })
-
-                return;
-            }
-        }
+        this.setState((prevState) => ({
+            tasks: prevState.tasks.map((task) => {
+                if (task.key == key) {
+                    task[target.name] = target.value
+                }
+                return task
+            })
+        }))
     }
 
     handleDelete(key) {
-        console.log('del')
-        let currtasks = this.state.tasks.slice()
-
-        for (let i = 0; i < currtasks.length; i++) {
-            if (currtasks[i].key == key) {
-                currtasks.splice(i, 1)
-
-                this.setState({
-                    tasks: currtasks
-                })
-
-                return;
-            }
-        }
+        this.setState((prevState) => ({
+            tasks: prevState.tasks.filter((task) => task.key !== key)
+        }))
     }
 
 
