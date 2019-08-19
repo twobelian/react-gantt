@@ -7,7 +7,9 @@ export default class TaskPanel extends Component {
         super(props)
 
         this.handleAddTask = this.handleAddTask.bind(this)
-        this.handleChange = this.handleChange.bind(this)
+        this.handleTaskNameChange = this.handleTaskNameChange.bind(this)
+        this.handleDateChange = this.handleDateChange.bind(this)
+        this.handleDurationChange = this.handleDurationChange.bind(this)
         this.handleDelete = this.handleDelete.bind(this)
 
         this.state = {
@@ -19,28 +21,33 @@ export default class TaskPanel extends Component {
     handleAddTask() {
         this.setState((prevState) => ({ tasks: [...prevState.tasks, newTask()] }))
     }
-    handleChange(e, key) {
-        const target = e.target
-
+    handleTaskNameChange(target, key) {
         this.setState((prevState) => ({
             tasks: prevState.tasks.map((task) => {
-                if (task.key == key) {
-                    switch (target.name) {
-                        case 'duration':
-                            if (!!parseInt(e.target.value)) {
-                                let baseDate = new moment(task.startdate)
-                                baseDate.add(parseInt(e.target.value), "days")
-                                task.duedate = baseDate
-                            }
-                            break;
-                        case 'startdate':
-                        case 'duedate':
-                            task[target.name] = moment(target.value)
-                            break;
-                        default:
-                            task[target.name] = target.value
+                if (task.key == key)
+                    task[target.name] = target.value
+                return task
+            })
+        }))
+    }
+    handleDateChange(target, key) {
+        this.setState((prevState) => ({
+            tasks: prevState.tasks.map((task) => {
+                if (task.key == key && moment(target.value).isValid())
+                    task[target.name] = moment(target.value)
+                return task
+            })
+        }))
+    }
+    handleDurationChange(target, key) {
+        let value = target.value
+        this.setState((prevState) => ({
+            tasks: prevState.tasks.map((task) => {
+                if (task.key == key)
+                    if (!!parseInt(value)) {
+                        let baseDate = new moment(task.startdate)
+                        task.duedate = baseDate.add(parseInt(value), "days")
                     }
-                }
                 return task
             })
         }))
@@ -57,7 +64,9 @@ export default class TaskPanel extends Component {
                     <TableHead />
                     <TableBody
                         tasks={this.state.tasks}
-                        handleChange={this.handleChange}
+                        handleTaskNameChange={this.handleTaskNameChange}
+                        handleDateChange={this.handleDateChange}
+                        handleDurationChange={this.handleDurationChange}
                         handleDelete={this.handleDelete}
                     />
                     <TableFoot tasks={this.state.tasks} />
@@ -85,7 +94,9 @@ const TableBody = (props) => {
             props.tasks.map(item =>
                 <Row
                     item={item}
-                    handleChange={props.handleChange}
+                    handleTaskNameChange={props.handleTaskNameChange}
+                    handleDateChange={props.handleDateChange}
+                    handleDurationChange={props.handleDurationChange}
                     handleDelete={props.handleDelete}
                     key={item.key}
                 />
@@ -120,8 +131,10 @@ const Row = (props) => {
         duedate
     } = props.item
     const {
-        handleChange,
-        handleDelete
+        handleTaskNameChange,
+        handleDateChange,
+        handleDelete,
+        handleDurationChange
     } = props
 
 
@@ -132,7 +145,7 @@ const Row = (props) => {
                     type="text"
                     name="taskname"
                     defaultValue={taskname}
-                    onChange={(e) => handleChange(e, key)}>
+                    onChange={(e) => handleTaskNameChange(e.target, key)}>
                 </input>
             </td>
             <td>
@@ -140,7 +153,7 @@ const Row = (props) => {
                     type="date"
                     name="startdate"
                     value={startdate.format(InputeDateString)}
-                    onChange={(e) => handleChange(e, key)}>
+                    onChange={(e) => handleDateChange(e.target, key)}>
                 </input>
             </td>
             <td>
@@ -148,7 +161,7 @@ const Row = (props) => {
                     type="date"
                     name="duedate"
                     value={duedate.format(InputeDateString)}
-                    onChange={(e) => handleChange(e, key)}>
+                    onChange={(e) => handleDateChange(e.target, key)}>
                 </input>
             </td>
             <td>
@@ -156,7 +169,7 @@ const Row = (props) => {
                     type="text"
                     name="duration"
                     value={duedate.diff(startdate, 'days')}
-                    onChange={(e) => handleChange(e, key)}>
+                    onChange={(e) => handleDurationChange(e.target, key)}>
                 </input>
             </td>
             <td>
