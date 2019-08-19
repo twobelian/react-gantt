@@ -13,9 +13,13 @@ export default class TaskPanel extends Component {
         this.handleDelete = this.handleDelete.bind(this)
 
         this.state = {
-            tasks: [
-                newTask()
-            ]
+            tasks: props.tasks.filter((task) =>
+                moment(task.startdate).isValid() && moment(task.duedate).isValid()
+            ).map((task) => {
+                task.startdate = new moment(task.startdate)
+                task.duedate = new moment(task.duedate)
+                return task
+            })
         }
     }
     handleAddTask() {
