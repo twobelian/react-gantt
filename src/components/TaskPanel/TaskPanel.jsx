@@ -78,12 +78,7 @@ export default class TaskPanel extends Component {
                 <table>
                     <TableHead />
                     {this.renderTableBody()}
-                    <tfoot>
-                        <tr>
-                            <td>Total Duration</td>
-                            <td>200</td>
-                        </tr>
-                    </tfoot>
+                    <TableFoot tasks={this.state.tasks} />
                 </table>
                 <button onClick={this.handleAddTask}>Add New Task</button>
             </div>
@@ -101,6 +96,24 @@ const TableHead = () => (
         </tr>
     </thead>
 )
+
+
+const TableFoot = (props) => (
+    <tfoot>
+        <tr>
+            <td>Total Duration</td>
+            <td>
+                {
+                    props.tasks.map((task) =>
+                        task.duedate.diff(task.startdate, 'days')
+                    ).reduce((acc, cValue) => acc + cValue, 0)
+                }
+            </td>
+        </tr>
+    </tfoot>
+)
+
+
 
 const newTask = () => (
     {
