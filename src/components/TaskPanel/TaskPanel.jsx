@@ -16,11 +16,9 @@ export default class TaskPanel extends Component {
             ]
         }
     }
-
     handleAddTask() {
         this.setState((prevState) => ({ tasks: [...prevState.tasks, newTask()] }))
     }
-
     handleChange(e, key) {
         const target = e.target
 
@@ -29,9 +27,9 @@ export default class TaskPanel extends Component {
                 if (task.key == key) {
                     switch (target.name) {
                         case 'duration':
-                            if (!!parseInt(target.value)) {
+                            if (!!parseInt(e.target.value)) {
                                 let baseDate = new moment(task.startdate)
-                                baseDate.add(parseInt(target.value), "days")
+                                baseDate.add(parseInt(e.target.value), "days")
                                 task.duedate = baseDate
                             }
                             break;
@@ -47,37 +45,21 @@ export default class TaskPanel extends Component {
             })
         }))
     }
-
     handleDelete(key) {
         this.setState((prevState) => ({
             tasks: prevState.tasks.filter((task) => task.key !== key)
         }))
     }
-
-
-    renderTableBody() {
-        return (
-            <tbody>{
-                this.state.tasks.map(item =>
-                    <Row
-                        item={item}
-                        handleChange={this.handleChange}
-                        handleDelete={this.handleDelete}
-                        key={item.key}
-                    />
-                )
-            }
-            </tbody>
-        )
-    }
-
-
     render() {
         return (
             <div>
                 <table>
                     <TableHead />
-                    {this.renderTableBody()}
+                    <TableBody
+                        tasks={this.state.tasks}
+                        handleChange={this.handleChange}
+                        handleDelete={this.handleDelete}
+                    />
                     <TableFoot tasks={this.state.tasks} />
                 </table>
                 <button onClick={this.handleAddTask}>Add New Task</button>
@@ -97,6 +79,21 @@ const TableHead = () => (
     </thead>
 )
 
+const TableBody = (props) => {
+    return (
+        <tbody>{
+            props.tasks.map(item =>
+                <Row
+                    item={item}
+                    handleChange={props.handleChange}
+                    handleDelete={props.handleDelete}
+                    key={item.key}
+                />
+            )
+        }
+        </tbody>
+    )
+}
 
 const TableFoot = (props) => (
     <tfoot>
@@ -114,19 +111,6 @@ const TableFoot = (props) => (
 )
 
 
-
-const newTask = () => (
-    {
-        key: uuid(),
-        taskname: "new task",
-        startdate: new moment(),
-        duedate: new moment().add(7, "days"),
-        // tasks must be done before this task start
-        prerequisites: []
-    }
-)
-
-const InputeDateString = "YYYY-MM-DD"
 
 const Row = (props) => {
     const {
@@ -186,3 +170,17 @@ const Row = (props) => {
         </tr>
     )
 }
+
+
+const newTask = () => (
+    {
+        key: uuid(),
+        taskname: "new task",
+        startdate: new moment(),
+        duedate: new moment().add(7, "days"),
+        // tasks must be done before this task start
+        prerequisites: []
+    }
+)
+
+const InputeDateString = "YYYY-MM-DD"
